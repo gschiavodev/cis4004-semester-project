@@ -1,0 +1,48 @@
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.env
+*.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+media
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# React
+build/
+dist/
+
+# Docker
+*.log
+docker-compose.override.yml
+.env
+
+# PostgreSQL
+database/data
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
