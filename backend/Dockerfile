@@ -1,12 +1,18 @@
+# Use an official Python runtime as a parent image
+FROM python:3.10-slim
 
-FROM python:3.8-slim-buster
-
-ENV PYTHONUNBUFFERED 1
-
+# Set the working directory
 WORKDIR /backend
 
+# Install dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy the project into the container
 COPY . .
 
-RUN pip install --upgrade pip && pip install -r requirements.txt
-
+# Expose the port
 EXPOSE 8000
+
+# Run Django server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

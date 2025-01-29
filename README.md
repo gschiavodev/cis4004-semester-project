@@ -17,5 +17,5 @@ This project is a fullstack application built with Django for the backend, React
    ```
 
 3. **Access the application:**
-   - The React frontend will be available at `http://localhost:3000`.
+   - The React frontend will be available at `http://localhost:5173`.
    - The Django backend will be available at `http://localhost:8000`.
