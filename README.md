@@ -12,7 +12,6 @@ This project is a fullstack application built with Django for the backend, React
 
 2. **Build and run the application using Docker Compose:**
    ```
-   setup.sh
    docker-compose up --build
    ```
 
