@@ -29,6 +29,16 @@ class GameRiddle(models.Model):
     verification_score = models.FloatField(null=True, blank=True)  # AI model score (0 to 1)
     is_correct = models.BooleanField(null=True, blank=True)         # Set after answer evaluation
     answered_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)  # New field to track active riddle
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['game'],
+                condition=models.Q(is_active=True),
+                name='unique_active_riddle_per_game'
+            )
+        ]
 
     def __str__(self):
         status = (

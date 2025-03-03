@@ -2,9 +2,11 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from .models import Game, GameRiddle
 import requests
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer, CrossEncoder, util
 
-model = SentenceTransformer('sentence-transformers/paraphrase-MiniLM-L6-v2')
+# Initialize both models
+paraphrase_model = SentenceTransformer('sentence-transformers/paraphrase-MiniLM-L6-v2')
+cross_encoder_model = CrossEncoder('cross-encoder/stsb-roberta-large')
 
 class GameService:
     @staticmethod
@@ -50,12 +52,13 @@ class GameService:
     @staticmethod
     def assign_new_riddle(game):
         """
-        Attaches a new riddle to the game if there is no pending riddle.
-        This will create a new GameRiddle only if there's no active (pending) one.
+        Attaches a new riddle to the game, marking the current active riddle as inactive.
         """
-        # Check if there's already an active riddle.
-        if game.game_riddles.filter(is_correct__isnull=True).exists():
-            raise ValueError("There is already an active riddle for this game.")
+        # Mark the current active riddle as inactive if it exists.
+        current_riddle = game.game_riddles.filter(is_active=True).first()
+        if current_riddle:
+            current_riddle.is_active = False
+            current_riddle.save()
         
         riddle_data = GameService.fetch_riddle_from_api()
         if not riddle_data:
@@ -65,7 +68,8 @@ class GameService:
         new_riddle = GameRiddle.objects.create(
             game=game,
             question=riddle_data['riddle'],
-            answer=riddle_data['answer']
+            answer=riddle_data['answer'],
+            is_active=True  # Mark the new riddle as active
         )
 
         return new_riddle
@@ -78,11 +82,9 @@ class GameService:
 
         if game.hearts <= 0:
             game.hearts = 0
-            game.is_active = False
-        elif game.hearts > 10:
+
+        if game.hearts >= 10:
             game.hearts = 10
-        else:
-            game.is_active = True
 
         game.last_updated = timezone.now()
         game.save()
@@ -90,43 +92,76 @@ class GameService:
         return game
 
     @staticmethod
-    def verify_answer(riddle, user_answer):
-        """Use sentence similarity to verify the answer."""
-        correct_answer = riddle.answer
-        embeddings = model.encode([correct_answer, user_answer], convert_to_tensor=True)
-        similarity_score = util.pytorch_cos_sim(embeddings[0], embeddings[1]).item()
+    def modify_streak(user, change):
+        """Modify the streak count (+ or -) for an active game."""
+        game = get_object_or_404(Game, user=user, is_active=True)
+        game.streak += change
 
-        return similarity_score
+        if game.streak <= 0:
+            game.streak = 0
+
+        game.last_updated = timezone.now()
+        game.save()
+
+        return game
+
+    @staticmethod
+    def verify_answer(riddle, user_answer, method='cross_encoder'):
+        """
+        Verify answer using either cross-encoder or paraphrase model.
+        :param riddle: The riddle object containing the correct answer.
+        :param user_answer: The answer provided by the user.
+        :param method: 'cross_encoder' or 'paraphrase'
+        :return: A normalized similarity score between 0 and 1.
+        """
+        if method == 'cross_encoder':
+            pair = [[riddle.answer, user_answer]]
+            scores = cross_encoder_model.predict(pair)
+            if scores is None or len(scores) == 0:
+                return 0.0  # Return 0 if no score is found
+
+            # Convert the first score to a float explicitly
+            similarity_score = float(scores[0])
+            return similarity_score
+        elif method == 'paraphrase':
+            # Fallback to the original paraphrase model approach
+            embeddings = paraphrase_model.encode([riddle.answer, user_answer], convert_to_tensor=True)
+            similarity_score = util.pytorch_cos_sim(embeddings[0], embeddings[1]).item()
+            return similarity_score
+        else:
+            raise ValueError("Invalid verification method.")
 
     @staticmethod
     def get_current_riddle(game):
-        """Fetches the current active (pending) riddle for a game."""
-        return game.game_riddles.filter(is_correct__isnull=True).first()
+        """Fetches the current active riddle for a game."""
+        return game.game_riddles.filter(is_active=True).first()
 
     @staticmethod
-    def submit_riddle_answer(user, user_answer, pass_threshold=0.8):
+    def submit_riddle_answer(user, user_answer, method='cross_encoder'):
         """Handles riddle answer submission logic and updates game state accordingly."""
         game = get_object_or_404(Game, user=user, is_active=True)
         current_riddle = GameService.get_current_riddle(game)
         if not current_riddle:
-            raise ValueError("No pending riddle to answer.")
+            raise ValueError("No active riddle to answer.")
 
-        verification_score = GameService.verify_answer(current_riddle, user_answer)
-        # Update the riddle based on the verification score.
+        # Dynamic threshold based on answer length
+        answer_length = len(current_riddle.answer.split())
+        
+        # Short answers (strict)
+        if answer_length <= 3:
+            pass_threshold = 0.50
+        # Medium answers (moderate)
+        elif answer_length <= 6:
+            pass_threshold = 0.45
+        # Long answers (forgiving)
+        else:
+            pass_threshold = 0.40
+
+        # Use the desired verification method
+        verification_score = GameService.verify_answer(current_riddle, user_answer, method)
         current_riddle.verification_score = verification_score
         current_riddle.is_correct = verification_score >= pass_threshold
         current_riddle.answered_at = timezone.now()
         current_riddle.save()
-
-        # Update game state based on whether the answer was correct.
-        if current_riddle.is_correct:
-            game.streak += 1
-        else:
-            game.hearts -= 1
-            if game.hearts <= 0:
-                game.hearts = 0
-                game.is_active = False
-        game.last_updated = timezone.now()
-        game.save()
 
         return current_riddle
