@@ -1,6 +1,6 @@
 # Riddle Survival Game
 
-This project is a fullstack application built with Django for the backend, React for the frontend, and a PostgreSQL database.
+This project is a fullstack application built with Django for the backend, React for the frontend, and a SQLite database.
 
 ## Setup Instructions
 
