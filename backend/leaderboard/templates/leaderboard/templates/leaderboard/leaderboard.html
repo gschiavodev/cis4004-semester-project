@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaderboard</title>
+</head>
+<body>
+    <h1>Leaderboard</h1>
+    <table>
+        <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Score</th>
+            <th>Timestamp</th>
+        </tr>
+        {% for player in leaderboard %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ player.username }}</td>
+            <td>{{ player.score }}</td>
+            <td>{{ player.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
