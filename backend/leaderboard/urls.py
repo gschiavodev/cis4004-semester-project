@@ -1,5 +1,6 @@
 from django.urls import path
+from . import views
 
 urlpatterns = [
-    # Add URL patterns here
+    path('leaderboard/', views.leaderboard_view, name='leaderboard'),
 ]
