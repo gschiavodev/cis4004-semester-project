@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'account',
     'game',
     'leaderboard',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
