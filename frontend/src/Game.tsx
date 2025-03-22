@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { TextField, Button, Card, CardContent, Typography } from "@mui/material";
 
 export default function RiddlePage() {
     const riddle = "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?";
@@ -27,30 +28,34 @@ export default function RiddlePage() {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: '#f3f4f6', fontFamily: 'Arial, sans-serif', textAlign: 'center' }}>
-            <div style={{ background: 'black', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', maxWidth: '400px', width: '100%' }}>
-                <h1>Riddle</h1>
-                <p>{riddle}</p>
-                <p>Lives: {lives}</p>
-                <p>Score: {score}</p>
-                <input 
-                    type="text" 
-                    value={answer} 
-                    onChange={(e) => setAnswer(e.target.value)} 
-                    placeholder="Enter your answer" 
-                    style={{ width: '100%', padding: '10px', margin: '10px 0', border: '1px solid #ccc', borderRadius: '4px' }}
-                    disabled={lives === 0}
-                />
-                <button 
-                    onClick={checkAnswer} 
-                    style={{ padding: '10px 15px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                    disabled={lives === 0}
-                >
-                    Submit
-                </button>
-                {message && (
-                    <p style={{ marginTop: '10px', fontWeight: 'bold', color: lives === 0 ? 'red' : 'white' }}>{message}</p>
-                )}
-            </div>
+            <Card style={{ maxWidth: '400px', width: '100%', padding: '20px', textAlign: 'center' }}>
+                <CardContent>
+                    <Typography variant="h5" gutterBottom>Riddle</Typography>
+                    <Typography variant="body1" paragraph>{riddle}</Typography>
+                    <Typography variant="body2" color="textSecondary">Lives: {lives}</Typography>
+                    <Typography variant="body2" color="textSecondary">Score: {score}</Typography>
+                    <TextField 
+                        fullWidth 
+                        variant="outlined" 
+                        value={answer} 
+                        onChange={(e) => setAnswer(e.target.value)} 
+                        placeholder="Enter your answer" 
+                        disabled={lives === 0} 
+                        margin="normal"
+                    />
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={checkAnswer} 
+                        disabled={lives === 0}
+                    >
+                        Submit
+                    </Button>
+                    {message && (
+                        <Typography variant="body1" style={{ marginTop: '10px', fontWeight: 'bold', color: lives === 0 ? 'red' : 'black' }}>{message}</Typography>
+                    )}
+                </CardContent>
+            </Card>
         </div>
     );
 }
