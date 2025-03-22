@@ -2,6 +2,9 @@ import { useState } from "react";
 import { TextField, Button, Card, CardContent, Typography } from "@mui/material";
 import axios from "axios";
 
+
+// this function will probably need to be written once backend is properly connected. currently hardcode bandaid.
+
 export default function RiddlePage() {
     const riddle = "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?";
     const correctAnswer = "echo";
@@ -11,42 +14,46 @@ export default function RiddlePage() {
     const [message, setMessage] = useState("");
     const [score, setScore] = useState(0);
 
-    const startGame = async () => {
-        setGameStarted(true);
-        setLives(3);
-        setAnswer("");
-        setMessage("");
-    };
+// need to create async functions to start game correctly with proper riddle information.
 
-    const checkAnswer = async () => {
-        try {
-            const response = await fetch("http://localhost:8000/game/services", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ answer }),
-            });
+    // const startGame = async () => {
+    //     setGameStarted(true);
+    //     setLives(3);
+    //     setAnswer("");
+    //     setMessage("");
+    // };
 
-            const data = await response.json();
+    // const checkAnswer = async () => {
+    //     try {
+    //         const response = await fetch("http://localhost:8000/game/services", {
+    //             method: "POST",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({ answer }),
+    //         });
 
-            if (data.correct) {
-                setMessage("Correct! You solved the riddle!");
-                setScore(score+1);
-            } else {
-                if (lives > 1) {
-                    setLives(lives - 1);
-                    setMessage(`Wrong answer! You have ${lives - 1} lives left.`);
-                } else {
-                    setLives(0);
-                    setMessage("Game Over! No lives left.");
-                }
-            }
-            setUserAnswer(answer);
-        } catch (error) {
-            console.error("Error checking answer:", error);
-            setMessage("Error connecting to the server.");
-        }
-    };
+    //         const data = await response.json();
 
+    //         if (data.correct) {
+    //             setMessage("Correct! You solved the riddle!");
+    //             setScore(score+1);
+    //         } else {
+    //             if (lives > 1) {
+    //                 setLives(lives - 1);
+    //                 setMessage(`Wrong answer! You have ${lives - 1} lives left.`);
+    //             } else {
+    //                 setLives(0);
+    //                 setMessage("Game Over! No lives left.");
+    //             }
+    //         }
+    //         setUserAnswer(answer);
+    //     } catch (error) {
+    //         console.error("Error checking answer:", error);
+    //         setMessage("Error connecting to the server.");
+    //     }
+    // };
+
+
+    // just a basic starting point for me to begin working. visuals are effed but who cares we need a working prototype
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: '#f3f4f6', fontFamily: 'Arial, sans-serif', textAlign: 'center' }}>
             <Card style={{ maxWidth: '400px', width: '100%', padding: '20px', textAlign: 'center' }}>
