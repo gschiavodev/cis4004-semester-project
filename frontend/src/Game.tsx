@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { TextField, Button, Card, CardContent, Typography } from "@mui/material";
+import axios from "axios";
 
 export default function RiddlePage() {
     const riddle = "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?";
@@ -10,20 +11,40 @@ export default function RiddlePage() {
     const [message, setMessage] = useState("");
     const [score, setScore] = useState(0);
 
-    const checkAnswer = () => {
-        if (answer.toLowerCase() === correctAnswer) {
-            setMessage("Correct! You solved the riddle!");
-            setScore(score+1);
-        } else {
-            if (lives > 1) {
-                setLives(lives - 1);
-                setMessage(`Wrong answer! You have ${lives - 1} lives left.`);
+    const startGame = async () => {
+        setGameStarted(true);
+        setLives(3);
+        setAnswer("");
+        setMessage("");
+    };
+
+    const checkAnswer = async () => {
+        try {
+            const response = await fetch("http://localhost:8000/game/services", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ answer }),
+            });
+
+            const data = await response.json();
+
+            if (data.correct) {
+                setMessage("Correct! You solved the riddle!");
+                setScore(score+1);
             } else {
-                setLives(0);
-                setMessage("Game Over! No lives left.");
+                if (lives > 1) {
+                    setLives(lives - 1);
+                    setMessage(`Wrong answer! You have ${lives - 1} lives left.`);
+                } else {
+                    setLives(0);
+                    setMessage("Game Over! No lives left.");
+                }
             }
+            setUserAnswer(answer);
+        } catch (error) {
+            console.error("Error checking answer:", error);
+            setMessage("Error connecting to the server.");
         }
-        setUserAnswer(answer);
     };
 
     return (
