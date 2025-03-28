@@ -5,6 +5,7 @@ services:
       - "5173:5173"
     volumes:
       - ./frontend:/frontend
+      - /frontend/node_modules  # Exclude node_modules from being overwritten
     environment:
       - CHOKIDAR_USEPOLLING=true
     depends_on:
