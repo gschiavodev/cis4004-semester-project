@@ -4,15 +4,14 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /frontend
 
-# Copy package.json and install dependencies
-COPY package*.json ./
-RUN npm install
+# Copy package files
+COPY package.json package-lock.json* ./
 
-# Copy the entire project
-COPY . .
+# Install dependencies inside the container
+RUN npm install
 
 # Expose Vite's default port
 EXPOSE 5173
 
-# Start the app
-CMD ["npm", "run", "dev", "--", "--host"]
+# Start the app with a script that checks for dependencies
+CMD ["sh", "-c", "npm install && npm run dev -- --host"]
