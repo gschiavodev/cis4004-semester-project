@@ -7,7 +7,6 @@ import axios from "axios";
 
 export default function RiddlePage() {
     const [riddle, setRiddle] = useState("Loading riddle...");
-    const correctAnswer = "echo";
     const [answer, setAnswer] = useState("");
     const [userAnswer, setUserAnswer] = useState(null);
     const [lives, setLives] = useState(3);
@@ -18,6 +17,7 @@ export default function RiddlePage() {
     // need to create async functions to start game correctly with proper riddle information.
 
             useEffect(() => {
+
                 const fetchRiddle = async () => {
                     try {
                         const response = await fetch("http://localhost:8000/game/current-riddle/");
@@ -28,8 +28,7 @@ export default function RiddlePage() {
                         setRiddle("Failed to load riddle.");
                     }
                 };
-                fetchRiddle();
-            
+
                 const fetchCorrectAnswer = async () => {
                     try {
                         const response = await fetch("http://localhost:8000/game/current-riddle-answer/");
@@ -40,7 +39,7 @@ export default function RiddlePage() {
                         setAnswer(null);
                     }
                 };
-        
+                // runs the above functions when the game start game button clicked
                 if (gameStarted) {
                     fetchRiddle();
                     fetchCorrectAnswer();
@@ -100,7 +99,7 @@ export default function RiddlePage() {
                 }
             }
     
-
+            // not sure what the modify hearts backend does need further testing but assuming it will change num of lives user has
     const modifyHearts = async (change) => {
         const url = "http://localhost:8000/game/modify-game-hearts/";
     
@@ -148,14 +147,17 @@ export default function RiddlePage() {
             if (data.correct) {
                 setMessage("Correct! You solved the riddle!");
             } else {
+                // need to better dynamically change lives but will work on later
                 if (lives > 1) {
                     modifyHearts(-1);
                     setMessage(`Wrong answer! You have ${lives - 1} lives left.`);
                 } else {
+                    // need to make a submit async function to post of highscore here
                     endGame();
                     setMessage("Game Over! No lives left.");
                 }
             }
+            // user submits answer and their answer gets stored via here
             setUserAnswer(answer);
         } catch (error) {
             console.error("Error checking answer:", error);
