@@ -2,11 +2,10 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from .models import Game, GameRiddle
 import requests
-from sentence_transformers import SentenceTransformer, CrossEncoder, util
+from sentence_transformers import CrossEncoder
 
 # Initialize both models
-paraphrase_model = SentenceTransformer('sentence-transformers/paraphrase-MiniLM-L6-v2')
-cross_encoder_model = CrossEncoder('cross-encoder/stsb-roberta-large')
+cross_encoder_model = CrossEncoder('cross-encoder/ms-marco-MiniLM-L6-v2')
 
 class GameService:
     @staticmethod
@@ -106,30 +105,28 @@ class GameService:
         return game
 
     @staticmethod
-    def verify_answer(riddle, user_answer, method='cross_encoder'):
+    def verify_answer(riddle, user_answer):
         """
-        Verify answer using either cross-encoder or paraphrase model.
+        Verify answer using the cross-encoder model.
         :param riddle: The riddle object containing the correct answer.
         :param user_answer: The answer provided by the user.
-        :param method: 'cross_encoder' or 'paraphrase'
         :return: A normalized similarity score between 0 and 1.
         """
-        if method == 'cross_encoder':
-            pair = [[riddle.answer, user_answer]]
-            scores = cross_encoder_model.predict(pair)
-            if scores is None or len(scores) == 0:
-                return 0.0  # Return 0 if no score is found
+        # Check if the answer is empty
+        if not user_answer:
+            return 0.0
 
-            # Convert the first score to a float explicitly
-            similarity_score = float(scores[0])
-            return similarity_score
-        elif method == 'paraphrase':
-            # Fallback to the original paraphrase model approach
-            embeddings = paraphrase_model.encode([riddle.answer, user_answer], convert_to_tensor=True)
-            similarity_score = util.pytorch_cos_sim(embeddings[0], embeddings[1]).item()
-            return similarity_score
-        else:
-            raise ValueError("Invalid verification method.")
+        # Use the cross-encoder model for verification
+        pair = [[riddle.answer, user_answer]]
+        scores = cross_encoder_model.predict(pair)
+
+        # Validate the scores and return the similarity score
+        if scores is None or len(scores) == 0:
+            return 0.0  # Return 0 if no score is found
+
+        # Convert the first score to a float explicitly
+        similarity_score = float(scores[0])
+        return similarity_score
 
     @staticmethod
     def get_current_riddle(game):
