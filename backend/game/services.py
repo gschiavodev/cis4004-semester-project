@@ -1,11 +1,14 @@
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-from .models import Game, GameRiddle
 import requests
+
+from .models import Game, GameRiddle
+
 from sentence_transformers import CrossEncoder
+from torch import torch
 
 # Initialize both models
-cross_encoder_model = CrossEncoder('cross-encoder/ms-marco-MiniLM-L6-v2')
+cross_encoder_model = CrossEncoder('cross-encoder/stsb-roberta-large', device='cuda' if torch.cuda.is_available() else 'cpu')
 
 class GameService:
     @staticmethod
@@ -107,20 +110,23 @@ class GameService:
     @staticmethod
     def verify_answer(riddle, user_answer):
         """
-        Verify answer using the cross-encoder model.
+        Verify answer using either cross-encoder or paraphrase model.
         :param riddle: The riddle object containing the correct answer.
         :param user_answer: The answer provided by the user.
         :return: A normalized similarity score between 0 and 1.
         """
+
+        # Ensure the answer is in lowercase for consistent comparison
+        user_answer = user_answer.lower()
+        riddle.answer = riddle.answer.lower()
+
         # Check if the answer is empty
         if not user_answer:
             return 0.0
-
-        # Use the cross-encoder model for verification
+        
+        # Compute similarity score using the cross-encoder model
         pair = [[riddle.answer, user_answer]]
         scores = cross_encoder_model.predict(pair)
-
-        # Validate the scores and return the similarity score
         if scores is None or len(scores) == 0:
             return 0.0  # Return 0 if no score is found
 
@@ -134,7 +140,7 @@ class GameService:
         return game.game_riddles.filter(is_active=True).first()
 
     @staticmethod
-    def submit_riddle_answer(user, user_answer, method='cross_encoder'):
+    def submit_riddle_answer(user, user_answer):
         """Handles riddle answer submission logic and updates game state accordingly."""
         game = get_object_or_404(Game, user=user, is_active=True)
         current_riddle = GameService.get_current_riddle(game)
@@ -155,7 +161,7 @@ class GameService:
             pass_threshold = 0.40
 
         # Use the desired verification method
-        verification_score = GameService.verify_answer(current_riddle, user_answer, method)
+        verification_score = GameService.verify_answer(current_riddle, user_answer)
         current_riddle.verification_score = verification_score
         current_riddle.is_correct = verification_score >= pass_threshold
         current_riddle.answered_at = timezone.now()
