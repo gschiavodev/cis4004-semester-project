@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-from datetime import timedelta
+from decouple import config
 
 # -------------------------------------------------------------------
 # BASE SETTINGS
@@ -21,10 +21,10 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-jl*o(&o7t_r@xb#jbj4&leh_v9qdx9g#c791t5+k5o)bt1gy@)'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'corsheaders',
 
     # Custom apps
-    'account',
+    'user_account',
     'game',
     'leaderboard',
 ]
@@ -98,7 +98,7 @@ DATABASES = {
 # AUTHENTICATION CONFIGURATION
 # -------------------------------------------------------------------
 
-AUTH_USER_MODEL = 'account.User'
+AUTH_USER_MODEL = 'user_account.User'
 
 # Use session-based authentication
 REST_FRAMEWORK = {
@@ -142,6 +142,12 @@ SESSION_COOKIE_SECURE = False    # Disable Secure for local testing
 CSRF_COOKIE_SAMESITE = 'Lax'     # Ensure CSRF cookie is also sent
 CSRF_COOKIE_SECURE = False       # Disable Secure for CSRF cookie in local testing
 CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
+
+# -------------------------------------------------------------------
+# GOOGLE OAUTH CONFIGURATION
+# -------------------------------------------------------------------
+
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID')
 
 # -------------------------------------------------------------------
 # INTERNATIONALIZATION
