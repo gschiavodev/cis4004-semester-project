@@ -40,7 +40,7 @@ table {
 }
 
 th, td {
-  border: 1px solid #ddd;
+  border: 1px solid #070707;
   padding: 10px;
   text-align: center;
 }
@@ -56,7 +56,7 @@ tr:nth-child(even) {
 }
 
 tr:hover {
-  background-color: #ffffff;
+  background-color: #f4efef;
 }
 
 .pagination {
@@ -76,11 +76,57 @@ tr:hover {
   cursor: pointer;
 }
 
+/*Tab 1 and Tab 2*/
+.tabs {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 20px;
+  padding: 0 20px; 
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background-color: #080808;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+ /* Highlight the active tab */
+.tab-button.active {
+  background-color: #0a0b0b; /* Highlight the active tab */
+  color: #ffffff;
+}
+
+/* Darker shade on hover */
+.tab-button:hover {
+  background-color: #0056b3; 
+}
+
+
+
+.active-tab-title {
+  background-color:  #007bff; 
+  color: rgb(3, 3, 3); 
+  font-weight: bold; 
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px; 
+  margin: 20px 0;
+  transition: background-color 0.3s ease, color 0.3s ease; 
+}
 
 .pagination span {
   font-size: 16px;
   font-weight: bold;
+  color: #000000; 
+  transition: color 0.3s ease;
 }
+
 td.name {
   color: black; 
   font-weight: bold; 

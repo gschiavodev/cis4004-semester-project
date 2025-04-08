@@ -4,7 +4,8 @@ import './Leaderboard.css'; // Import the CSS file
 // Define interfaces for type safety
 interface LeaderboardItem {
   username: string;
-  highest_streak: number;
+  highest_streak?: number;
+  game_count?: number;
 }
 
 interface Pagination {
@@ -82,7 +83,7 @@ const Leaderboard: React.FC = () => {
 
       {activeTab === 'highestStreak' && (
         <div>
-          <h2>Highest Streak</h2>
+          <h2 className="active-tab-title">Highest Streak</h2>
           <table>
             <thead>
               <tr>
@@ -104,7 +105,7 @@ const Leaderboard: React.FC = () => {
 
       {activeTab === 'mostGamesPlayed' && (
         <div>
-          <h2>Most Games Played</h2>
+          <h2 className="active-tab-title">Most Games Played</h2>
           <table>
             <thead>
               <tr>
@@ -125,19 +126,23 @@ const Leaderboard: React.FC = () => {
       )}
 
       <div className="pagination">
-        <button
-          onClick={() => handlePageChange(page - 1)}
-          disabled={!pagination.previous}
-        >
-          Previous
-        </button>
-        <span>Page {page}</span>
-        <button
-          onClick={() => handlePageChange(page + 1)}
-          disabled={!pagination.next}
-        >
-          Next
-        </button>
+        {pagination.previous && (
+          <button
+            onClick={() => handlePageChange(page - 1)}
+            className="pagination-button"
+          >
+            Previous
+          </button>
+        )}
+        <span className="pagination-info">Page {page}</span>
+        {pagination.next && (
+          <button
+            onClick={() => handlePageChange(page + 1)}
+            className="pagination-button"
+          >
+            Next
+          </button>
+        )}
       </div>
     </div>
   );
