@@ -1,0 +1,149 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-size: cover; 
+  background-repeat: no-repeat;
+  height: 100vh; 
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#leaderboard {
+  width: 100%;
+  height: 100%;
+  background-color: #f7f7f7; 
+  text-align: center;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.leaderboard-title {
+  font-size: 48px; 
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 30px; 
+  text-align: center; 
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  flex-grow: 1; 
+}
+
+th, td {
+  border: 1px solid #070707;
+  padding: 10px;
+  text-align: center;
+}
+
+th {
+  background-color: #007bff;
+  color: rgb(12, 12, 12);
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f3ecec;
+}
+
+tr:hover {
+  background-color: #f4efef;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/*Tab 1 and Tab 2*/
+.tabs {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 20px;
+  padding: 0 20px; 
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background-color: #080808;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+ /* Highlight the active tab */
+.tab-button.active {
+  background-color: #0a0b0b; /* Highlight the active tab */
+  color: #ffffff;
+}
+
+/* Darker shade on hover */
+.tab-button:hover {
+  background-color: #0056b3; 
+}
+
+
+
+.active-tab-title {
+  background-color:  #007bff; 
+  color: rgb(3, 3, 3); 
+  font-weight: bold; 
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px; 
+  margin: 20px 0;
+  transition: background-color 0.3s ease, color 0.3s ease; 
+}
+
+.pagination span {
+  font-size: 16px;
+  font-weight: bold;
+  color: #000000; 
+  transition: color 0.3s ease;
+}
+
+td.name {
+  color: black; 
+  font-weight: bold; 
+}
+td.score {
+  color: black; 
+  font-weight: bold; 
+}
+
+td.games-played {
+  color: #020202; 
+  font-weight: bold; 
+  text-align: center;
+  font-size: 16px;
+  padding: 10px; 
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #0056b3;
+}

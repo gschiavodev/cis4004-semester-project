@@ -3,10 +3,12 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import GamePage from "./Game"; // Game Page
 import LoginPage from "./Login"; // Login Page
+import LeaderboardPage from "./Leaderboard"; // Leaderboard Page
 import ProtectedRoute from "./components/ProtectedRoute"; // ProtectedRoute component
 import Header from "./components/Header"; // Global Header component
 import "./index.css";
 import axios from "axios";
+import Leaderboard from "./Leaderboard";
 
 const Main = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -37,7 +39,11 @@ const Main = () => {
           path="/"
           element={<LoginPage isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />}
         />
-
+        {/* Public route for leader */}
+        <Route
+          path="/leaderboard"
+          element={<LeaderboardPage isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />}
+        />
         {/* Protected route for the game */}
         <Route
           path="/game"
