@@ -30,7 +30,7 @@ This project is a fullstack application built with Django for the backend, React
    - The React frontend will be available at `http://localhost:5173`.
    - The Django backend will be available at `http://localhost:8000`.
 
-# AI Uses
+## AI Uses
    
    For the project the main purpose of AI assistance in writing code was for debugging errors and code refactoring. Some example prompts would be as follows:
    - "Why is this backend view returning a 404 instead of the desired 200 with this input?"
